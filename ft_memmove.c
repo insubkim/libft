@@ -12,20 +12,24 @@
 #include "libft.h"
 void*   ft_memmove(void *s1, const void *s2, size_t n)
 {
+    int i;
 
-}
-
-#include <string.h>
-int main()
-{
-    int i = 1;
-    char a[100];
-    while (i <= 100)
+    if (s1 > s2)
     {
-        a[i - 1] = i;
-        i++;
+        while (n > 0)
+        {
+            n--;
+            ((char *)s1)[n] = ((char *)s2)[n];
+        }
     }
-    char *b = a + 1;
-    memmove(b, a, 100);
-    ft_strlen("asd");
+    else if (s1 < s2)
+    {
+        i = 0;
+        while (i < n)
+        {
+            ((char *)s1)[i] = ((char *)s2)[i];
+            i++;
+        }
+    }
+    return (s1);
 }
