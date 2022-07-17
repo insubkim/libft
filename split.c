@@ -1,36 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
+/*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: inskim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: inskim <inskim@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/26 21:07:32 by inskim            #+#    #+#             */
-/*   Updated: 2022/04/27 17:16:59 by inskim           ###   ########.fr       */
+/*   Updated: 2022/07/17 21:37:54 by inskim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
-int	is_charset(char c, char *charset)
-{
-	while (*charset)
-		if (*charset++ == c)
-			return (1);
-	return (0);
-}
-
-int	cnt_word(char *str, char *charset)
+int	static cnt_word(char const *s, char c)
 {
 	int	i;
 	int	flag;
 
 	i = 0 ;
 	flag = 1;
-	str--;
-	while (*++str)
+	s--;
+	while (*++s)
 	{
-		if (is_charset(*str, charset))
+		if (*s == c)
 			flag = 1;
 		else if (flag == 1)
 		{
@@ -41,7 +33,7 @@ int	cnt_word(char *str, char *charset)
 	return (i);
 }
 
-int	alloc(char **arr, char *str, int i, int j)
+int	static alloc(char **arr, char const *s, int i, int j)
 {
 	int	len;
 	int	k;
@@ -53,11 +45,11 @@ int	alloc(char **arr, char *str, int i, int j)
 	(*arr)[len] = 0;
 	k = 0;
 	while (i <= j)
-		(*arr)[k++] = str[i++];
+		(*arr)[k++] = s[i++];
 	return (1);
 }
 
-int	put(char **arr, char *str, char *charset)
+int	static put(char **arr, char const *s, char c)
 {
 	int	i;
 	int	j;
@@ -65,12 +57,12 @@ int	put(char **arr, char *str, char *charset)
 
 	j = -1;
 	flag = 1;
-	while (str[++j])
+	while (s[++j])
 	{
-		if (is_charset(str[j], charset))
+		if (s[j] == c)
 		{
 			if (flag == 0)
-				if (!alloc(arr++, str, i, j - 1))
+				if (!alloc(arr++, s, i, j - 1))
 					return (0);
 			flag = 1;
 		}
@@ -81,22 +73,42 @@ int	put(char **arr, char *str, char *charset)
 		}
 	}
 	if (flag == 0)
-		if (!alloc(arr, str, i, j))
+		if (!alloc(arr, s, i, j))
 			return (0);
 	return (1);
 }
 
-char	**ft_split(char *str, char *charset)
+char	**ft_split(char const *s, char c)
 {
 	int		word;
 	char	**arr;
 
-	word = cnt_word(str, charset);
+	word = cnt_word(s, c);
 	arr = (char **)malloc(sizeof(char *) * (word + 1));
 	if (!arr)
 		return (0);
 	arr[word] = 0;
-	if (!put(arr, str, charset))
+	if (!put(arr, s, c))
+	{
+		while (*arr)
+			free(*arr++);
+		free(arr);
 		return (0);
+	}
 	return (arr);
+}
+
+#include <stdio.h>
+int main()
+{
+	char *s ="11hello world11111 im in111sub1111kim1nice1to1mee1you";
+	char **arr = ft_split(s,'1');
+	int i = 0;
+	while (arr[i])
+		printf("%s",arr[i++]);
+	i = 0;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
+
 }
